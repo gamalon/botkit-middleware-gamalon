@@ -13,11 +13,12 @@ $botkit_purple: #a795ef;
 
 body,
 html {
-    margin: 0;
-    padding: 0;
-    font-size: 18px;
-    background-color: #FFF;
-    font-family: 'helvetica', sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  background-color: rgb(202, 63, 96);
+  font-family: 'helvetica', sans-serif;
+  height: 100%;
 }
 
 .wrapper {
@@ -49,9 +50,10 @@ footer {
     padding: 2rem;
 
     h1 {
-        font-size: 4rem;
-        margin: 0;
-
+      font-size: 4rem;
+      margin: 0;
+      color: white;
+      font-weight: 200;
     }
 }
 

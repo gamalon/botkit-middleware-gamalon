@@ -7,7 +7,7 @@ html {
   margin: 0;
   padding: 0;
   font-size: 18px;
-  background-color: #FFF;
+  background-color: rgb(202, 63, 96);
   font-family: 'helvetica', sans-serif; }
 
 .wrapper {
@@ -39,7 +39,9 @@ footer {
   text-align: center;
   padding: 2rem; }
   .hero h1 {
-    font-size: 4rem;
+    font-size: 4em;
+    font-weight: 200;
+    color: white;
     margin: 0; }
 
 a {
@@ -270,8 +272,9 @@ a.button {
 #homepage_bot {
   width: 400px;
   height: 450px;
-  float: left;
-  border: 5px solid #333;
+  margin: auto;
+  border: 2px solid #333;
+  border-radius: 3px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5); }
   #homepage_bot iframe {
     border: 0;
