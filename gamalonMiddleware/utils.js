@@ -86,4 +86,5 @@ module.exports = {
   wordListAdapter,
   pawelExportCleanUp,
   selectSlot,
+  notUtilityNode,
 };
