@@ -10,9 +10,9 @@ module.exports = function(controller) {
           bot.reply(message, 'Please give me an utterance to classify');
       });
 
-      controller.studio.before('welcome_user', function(convo, next) {
-          convo.setVar('bot', controller.studio_identity);
-          next();
-      });
+      // controller.studio.before('welcome_user', function(convo, next) {
+      //     convo.setVar('bot', controller.studio_identity);
+      //     next();
+      // });
     }
 };
