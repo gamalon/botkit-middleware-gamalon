@@ -5,15 +5,8 @@ env(__dirname + '/.env');
 var Botkit = require('botkit');
 var debug = require('debug')('botkit:main');
 
-var bot_options = {
-    // studio_token: process.env.studio_token,
-    // studio_command_uri: process.env.studio_command_uri,
-    // studio_stats_uri: process.env.studio_command_uri,
-    replyWithTyping: true,
-};
-
 // Create the Botkit controller, which controls all instances of the bot.
-var controller = Botkit.anywhere(bot_options);
+var controller = Botkit.anywhere();
 
 // Set up an Express-powered webserver to expose oauth and webhook endpoints
 var webserver = require(__dirname + '/components/express_webserver.js')(controller);
@@ -34,10 +27,7 @@ controller.openSocketServer(controller.httpserver);
 // Start the bot brain in motion!!
 controller.startTicking();
 
-
-var normalizedPath = require("path").join(__dirname, "skills");
-require("fs").readdirSync(normalizedPath).forEach(function(file) {
-  require("./skills/" + file)(controller);
-});
+// Add skills to chatbot
+require("./skills/gamalon.js")(controller);
 
 console.log('I AM ONLINE! COME TALK TO ME: http://localhost:' + (process.env.PORT || 3000))

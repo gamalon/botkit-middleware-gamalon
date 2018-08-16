@@ -1,6 +1,6 @@
 # Gamalon Botkit Middleware
 
-This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to easily integrate [Gamalon's](https://gamalon.com/) classification service with a botkit-powered bot.
+This middleware plugin for [Botkit](https://botkit.ai) allows developers to easily integrate [Gamalon's](https://gamalon.com/) classification service.
 
 ## Quick Start
 
@@ -13,9 +13,9 @@ This middleware plugin for [Botkit](http://howdy.ai/botkit) allows developers to
   TREE_ID=<your Gamalon tree id>
   ```
 4. Run `node .`
-5. Navigate to `localhost:3000` to see the chatbot.
+5. Navigate to `localhost:3000` to see the chatbot. It will spit out the classification results of any message you type.
 
-## Use
+## API
 
 `skills/gamalon.js` contains an example of how you might use the middleware.
 
@@ -28,7 +28,7 @@ const gamalonMiddleware = require('../gamalonMiddleware')({
 });
 ```
 
-* Once you've created the middleware, you have to use it. Gamalon's middleware can be used at any step of the incoming messages pipeline: `ingest`, `normalize`, `categorize`, `receive`. Below is an example of adding it to the `receive` step.
+* Once you've created the middleware, you can to use it. Gamalon's middleware can be used at any step of the incoming messages pipeline: `ingest`, `normalize`, `categorize`, `receive`. Below is an example of adding it to the `receive` step.
 
 ```js
 controller.middleware.receive.use(gamalonMiddleware);
@@ -58,6 +58,6 @@ To run test use `npm test`. You must have your access token and tree id in the
 * Copy the `gamalonMiddleware` directory into your project.
 * Run `npm install --save request`
 
-## Liscence
+## License
 
 * What???
