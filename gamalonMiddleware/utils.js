@@ -1,8 +1,5 @@
 const STRIPPED_WORDLIST_TYPES = ['present', 'absent'];
 
-const notUtilityNode = (name) => (
-  !(name.endsWith('-node') || name.endsWith('-wl'))
-);
 const selectSlot = (domains) => {
   let best = { intent: null, confidence: -Infinity, path: null };
   Object.keys(domains).forEach(key => {
@@ -27,6 +24,11 @@ const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
     }
   });
 }
+
+const notUtilityNode = (name) => (
+  !(name.endsWith('-node') || name.endsWith('-wl'))
+);
+
 const wordListAdapter = (node) => {
   if (node.type && node.type.indexOf('WL-') === 0) {
     const children = node.children;
@@ -45,7 +47,7 @@ const wordListAdapter = (node) => {
   }
 };
 
-const pawelExportCleanUp = (obj) => {
+const exportCleanUp = (obj) => {
   if (typeof obj === 'string') {
     return obj;
   }
@@ -75,7 +77,7 @@ const pawelExportCleanUp = (obj) => {
   const children = obj.children;
 
   copy.children = children && children.map(child => (
-    pawelExportCleanUp(child)
+    exportCleanUp(child)
   ));
 
   return copy;
@@ -84,7 +86,7 @@ const pawelExportCleanUp = (obj) => {
 
 module.exports = {
   wordListAdapter,
-  pawelExportCleanUp,
+  exportCleanUp,
   selectSlot,
   notUtilityNode,
 };

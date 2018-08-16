@@ -1,7 +1,7 @@
 const assert = require('assert');
 const {
   wordListAdapter,
-  pawelExportCleanUp,
+  exportCleanUp,
   selectSlot,
   notUtilityNode,
 } = require('../gamalonMiddleware/utils');
@@ -185,10 +185,10 @@ describe('wordListAdapter', () => {
   });
 });
 
-describe('pawelExportCleanUp', () => {
+describe('exportCleanUp', () => {
   it('should return a copy', () => {
     const tree = nodeWithNonWordlistChild(nodeWithAbsentWLChild(node()));
-    const exported = pawelExportCleanUp(tree);
+    const exported = exportCleanUp(tree);
     assert.equal(exported === tree, false);
     assert.deepEqual(exported, tree);
   });
@@ -196,19 +196,19 @@ describe('pawelExportCleanUp', () => {
   it('should add params if missing', () => {
     const tree = node();
     delete tree.params;
-    const exported = pawelExportCleanUp(tree);
+    const exported = exportCleanUp(tree);
     assert.equal(tree.params, undefined);
     assert.deepEqual(exported.params, []);
   });
 
   it('should retain linkId', () => {
     const tree = { ...node(), linkId: 'my-test22' };
-    const exported = pawelExportCleanUp(tree);
+    const exported = exportCleanUp(tree);
     assert.equal(exported.linkId, tree.linkId);
   });
 
   it('should return a string if it receives a string as input', () => {
-    const exported = pawelExportCleanUp('cat');
+    const exported = exportCleanUp('cat');
     assert.equal(exported, 'cat');
   });
 });
