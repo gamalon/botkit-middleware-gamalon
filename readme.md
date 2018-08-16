@@ -25,7 +25,8 @@ This middleware plugin for [Botkit](https://botkit.ai) allows developers to easi
 
 ```js
 const gamalonMiddleware = require('../gamalonMiddleware')({
-  accessToken: process.env.ACCESS_TOKEN,
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
   treeId: process.env.TREE_ID,
 });
 ```
