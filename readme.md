@@ -53,7 +53,7 @@ controller.on('message_received', function(bot, message) {
 
 ## Tests
 
-To run test use `npm test`. You must have your access token and tree id in the
+To run test use `npm test`. You must have your client id, client secret, and tree id in the
 `.env` file.
 
 ## Using the middleware
@@ -61,6 +61,3 @@ To run test use `npm test`. You must have your access token and tree id in the
 * Copy the `gamalonMiddleware` directory into your project.
 * Run `npm install --save request`
 
-## License
-
-* What???
