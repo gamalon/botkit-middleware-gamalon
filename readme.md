@@ -7,7 +7,7 @@ This middleware plugin for [Botkit](https://botkit.ai) allows developers to easi
 1. Run `npm install`.
 2. Get your `ACCESS_TOKEN` and `TREE_ID` from Gamalon.
 3. Create a `.env` file that should look as follows:
-  * ```
+  ```
   ACCESS_TOKEN=<your Gamalon access token>
 
   TREE_ID=<your Gamalon tree id>
