@@ -4,35 +4,54 @@ const API = require('./api');
 const { wordListAdapter, exportCleanUp, selectSlot } = require('./utils');
 
 let accessToken;
+let clientId;
+let clientSecret;
 let trainingId;
 let tree;
 let algorithm = 'revenum';
 let middlewareError;
 
+const setupAccessTokenRefresh = (expires_in) => {
+  setTimeout(() => {
+    API.fetchAccessToken(clientId, clientSecret).then((body) => {
+      accessToken = JSON.parse(body).access_token;
+      setupAccessTokenRefresh(body.expires_in);
+    });
+  }, (expires_in - 100) * 1000);
+};
+
 module.exports = function (config) {
-  accessToken = config.accessToken;
+  clientId = config.clientId;
+  clientSecret = config.clientSecret;
+  algorithm = config.algorithm || algorithm;
 
-  /**
-  * As soon as the module is imported, fetch the user's tree and train it. This
-  * causes an initial delay after starting the server before classification can
-  * occur. However, it makes each classification request faster.
-  */
-  API.fetchTree(accessToken, config.treeId)
-    .then((body) => {
-      tree = JSON.parse(body).tree.tree;
+  API.fetchAccessToken(clientId, clientSecret).then((body) => {
+    const parsedBody = JSON.parse(body);
+    accessToken = parsedBody.access_token;
+    setupAccessTokenRefresh(parsedBody.expires_in);
 
-      // process tree from DB to conform to truffula schema
-      wordListAdapter(tree);
-      tree = exportCleanUp(tree);
+    /**
+    * As soon as the module is imported, fetch the user's tree and train it. This
+    * causes an initial delay after starting the server before classification can
+    * occur. However, it makes each classification request faster.
+    */
+    API.fetchTree(accessToken, config.treeId)
+      .then((body) => {
+        tree = JSON.parse(body).tree.tree;
 
-      API.trainModel(accessToken, tree, algorithm)
-        .then((body) => {
-          trainingId = JSON.parse(body).data.id;
-          console.log('Tree is ready for classification');
-        })
-        .catch((err) => { middlewareError = `Train Model: ${err}`; });
-    })
-    .catch((err) => { middlewareError = `Fetch Tree: ${err}`; });
+        // process tree from DB to conform to truffula schema
+        wordListAdapter(tree);
+        tree = exportCleanUp(tree);
+
+        API.trainModel(accessToken, tree, algorithm)
+          .then((body) => {
+            trainingId = JSON.parse(body).data.id;
+            console.log('Tree is ready for classification');
+          })
+          .catch((err) => { middlewareError = `Train Model: ${err}`; });
+      })
+      .catch((err) => { middlewareError = `Fetch Tree: ${err}`; });
+  });
 
   return (bot, message, res, next) => {
     /**

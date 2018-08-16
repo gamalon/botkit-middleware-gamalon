@@ -5,6 +5,19 @@ const lionessENDPOINT = 'https://app.gamalon.com/lioness';
 const burrowENDPOINT = 'https://app.gamalon.com/burrow';
 
 module.exports = {
+  fetchAccessToken: (clientId, clientSecret) => {
+    const url = 'https://gamalon.auth0.com/oauth/token';
+    const headers = { 'Content-Type': 'application/json' };
+    const body = JSON.stringify({
+      client_id: clientId,
+      client_secret: clientSecret,
+      audience: "https://demo.gamalon.com/api",
+      grant_type: "client_credentials",
+    });
+
+    return apiRequest('post', headers, url, body);
+  },
+
   /**
   * Fetches the tree specified by the treeId. The user specified by the
   * accessToken must be authroized to use the tree.
@@ -72,7 +85,6 @@ const apiRequest = (method, headers, url, body) => {
 
   return new Promise((resolve, reject) => {
     request[method](options, (err, httpResponse, resBody) => {
-
       if (err) {
         reject(err);
       }
