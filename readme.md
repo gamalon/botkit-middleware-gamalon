@@ -21,7 +21,7 @@ This middleware plugin for [Botkit](https://botkit.ai) allows developers to easi
 
 `skills/gamalon.js` contains an example of how you might use the middleware.
 
-* First you'll want to instantiate the middleware, passing in the access token and tree id. This will tell the middleware which tree should be used for classification.
+* First you'll want to instantiate the middleware, passing in the client id, client secret, and tree id. This will tell the middleware which tree should be used for classification.
 
 ```js
 const gamalonMiddleware = require('../gamalonMiddleware')({
