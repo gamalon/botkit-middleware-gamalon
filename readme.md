@@ -5,10 +5,12 @@ This middleware plugin for [Botkit](https://botkit.ai) allows developers to easi
 ## Quick Start
 
 1. Run `npm install`.
-2. Get your `ACCESS_TOKEN` and `TREE_ID` from Gamalon.
+2. Get your `CLIENT_ID`, `CLIENT_SECRET` and `TREE_ID` from Gamalon.
 3. Create a `.env` file that should look as follows:
   ```
-  ACCESS_TOKEN=<your Gamalon access token>
+  CLIENT_ID=<your Gamalon client id>
+  
+  CLIENT_SECRET=<your Gamalon client secret>
 
   TREE_ID=<your Gamalon tree id>
   ```
@@ -19,11 +21,12 @@ This middleware plugin for [Botkit](https://botkit.ai) allows developers to easi
 
 `skills/gamalon.js` contains an example of how you might use the middleware.
 
-* First you'll want to instantiate the middleware, passing in the access token and tree id. This will tell the middleware which tree should be used for classification.
+* First you'll want to instantiate the middleware, passing in the client id, client secret, and tree id. This will tell the middleware which tree should be used for classification.
 
 ```js
 const gamalonMiddleware = require('../gamalonMiddleware')({
-  accessToken: process.env.ACCESS_TOKEN,
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
   treeId: process.env.TREE_ID,
 });
 ```
@@ -50,7 +53,7 @@ controller.on('message_received', function(bot, message) {
 
 ## Tests
 
-To run test use `npm test`. You must have your access token and tree id in the
+To run test use `npm test`. You must have your client id, client secret, and tree id in the
 `.env` file.
 
 ## Using the middleware
@@ -58,6 +61,3 @@ To run test use `npm test`. You must have your access token and tree id in the
 * Copy the `gamalonMiddleware` directory into your project.
 * Run `npm install --save request`
 
-## License
-
-* What???
