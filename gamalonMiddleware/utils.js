@@ -18,6 +18,7 @@ const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
     if (obj[key].children) {
       _selectSlot(obj[key].children, pathProbability, best, path);
     } else if (pathProbability > best.confidence && notUtilityNode(key)) {
+      console.log(key);
       best.confidence = pathProbability;
       best.intent = key;
       best.path = path;
@@ -26,7 +27,7 @@ const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
 }
 
 const notUtilityNode = (name) => (
-  !(name.endsWith('-node') || name.endsWith('-wl'))
+  !(name.endsWith('_node') || name.endsWith('_wl'))
 );
 
 const wordListAdapter = (node) => {

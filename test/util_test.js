@@ -39,12 +39,12 @@ describe('notUtilityNode', function() {
   });
 
   it('should return false if name ends with "-node"', function() {
-    const name = 'util-node';
+    const name = 'util_node';
     assert.equal(notUtilityNode(name), false);
   });
 
   it('should return false if name ends with "-wl"', function() {
-    const name = 'util-wl';
+    const name = 'util_wl';
     assert.equal(notUtilityNode(name), false);
   });
 });
@@ -103,7 +103,7 @@ describe('selectSlot', function() {
       Domain1: {
         probability: 1,
         children: {
-          'Domain11-node': {
+          'Domain11_node': {
             probability: 1,
             children: null
           }
@@ -112,7 +112,7 @@ describe('selectSlot', function() {
       Domain2: {
         probability: 1,
         children: {
-          'Domain21-wl': {
+          'Domain21_wl': {
             probability: 1,
             children: null
           }
