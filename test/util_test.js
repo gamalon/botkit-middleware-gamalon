@@ -98,7 +98,7 @@ describe('selectSlot', function() {
     assert.deepEqual(results.path, ["Domain2", "Domain22"]);
   });
 
-  it('should not consider intents that are utility nodes (contain -node or -el suffix)', () => {
+  it('should not consider intents that are utility nodes (contain _node or _wl suffix)', () => {
     const domains = {
       Domain1: {
         probability: 1,
