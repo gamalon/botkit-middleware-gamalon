@@ -1,7 +1,12 @@
 const request = require('request');
 
 const API = require('./api');
-const { wordListAdapter, exportCleanUp, selectSlot } = require('./utils');
+const {
+  wordListAdapter,
+  exportCleanUp,
+  selectSlot,
+  selectMultiIntents,
+} = require('./utils');
 
 let accessToken;
 let clientId;
@@ -9,6 +14,7 @@ let clientSecret;
 let trainingId;
 let tree;
 let algorithm = 'revenum';
+let multiIntent = false;
 let middlewareError;
 
 const setupAccessTokenRefresh = (expires_in) => {
@@ -24,6 +30,7 @@ module.exports = function (config) {
   clientId = config.clientId;
   clientSecret = config.clientSecret;
   algorithm = config.algorithm || algorithm;
+  multiIntent = config.multiIntent;
 
   API.fetchAccessToken(clientId, clientSecret).then((body) => {
     const parsedBody = JSON.parse(body);
@@ -76,7 +83,7 @@ module.exports = function (config) {
     */
     if (middlewareError) {
       message.gamalon = { error: middlewareError };
-      nextCall()
+      nextCall();
     }
 
     /**
@@ -85,8 +92,14 @@ module.exports = function (config) {
     if (accessToken && message.text) {
       API.classifyUtterance(accessToken, trainingId, message.text, algorithm)
         .then((body) => {
-          const domains = JSON.parse(body).data.attributes.domains;
-          message.gamalon = selectSlot(domains);
+          const { domains, mostLikelySubtree } = JSON.parse(body).data.attributes;
+
+          if (multiIntent) {
+            message.gamalon = selectMultiIntents(mostLikelySubtree, domains);
+          } else {
+            message.gamalon = selectSlot(domains);
+          }
+
           nextCall();
         })
         .catch((err) => {

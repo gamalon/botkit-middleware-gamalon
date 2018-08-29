@@ -9,7 +9,7 @@ This middleware plugin for [Botkit](https://botkit.ai) allows developers to easi
 3. Create a `.env` file that should look as follows:
   ```
   CLIENT_ID=<your Gamalon client id>
-  
+
   CLIENT_SECRET=<your Gamalon client secret>
 
   TREE_ID=<your Gamalon tree id>
@@ -51,6 +51,21 @@ controller.on('message_received', function(bot, message) {
 });
 ```
 
+### Multi-Intent
+
+In order to use multi-intent classification, pass boolean `multiIntent` into the middleware initialization config object. The results will instead be in a field called `intents`. Each object in the array represents an intent and has `intent`, `confidence`, `path` fields.
+
+```js
+controller.on('message_received', function(bot, message) {
+  const { error, intents } = message.gamalon;
+
+  intents.forEach((data) => {
+    const { intent, confidence, path } = data;
+    //...
+  });
+});
+```
+
 ## Tests
 
 To run test use `npm test`. You must have your client id, client secret, and tree id in the
@@ -60,4 +75,3 @@ To run test use `npm test`. You must have your client id, client secret, and tre
 
 * Copy the `gamalonMiddleware` directory into your project.
 * Run `npm install --save request`
-

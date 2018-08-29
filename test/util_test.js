@@ -4,6 +4,7 @@ const {
   exportCleanUp,
   selectSlot,
   notUtilityNode,
+  selectMultiIntents,
 } = require('../gamalonMiddleware/utils');
 
 const node = child => ({
@@ -24,6 +25,85 @@ const nodeWithPresentWLChild = child => ({
 
 const nodeWithAbsentWLChild = child => ({
   ...node({ ...child, type: 'WL-absent' }),
+});
+
+describe('selectMultiIntents', function() {
+  it('', function() {
+    const mostLikelySubtree = {
+      ROOT: {
+        Domain1: {
+          Domain1_wl: {},
+          Domain11: {},
+        },
+        Domain3: {
+          Domain32: {},
+        },
+      },
+    }
+    const domains = {
+      Domain1: {
+        children: {
+          Domain1_wl: {
+            children: null,
+            probability: 1,
+          },
+          Domain11: {
+            children: null,
+            probability: 0.3,
+          },
+          Domain12: {
+            children: null,
+            probability: 1,
+          },
+        },
+        probability: 1,
+      },
+      Domain2: {
+        children: {
+          Domain21: {
+            children: null,
+            probability: 0,
+          },
+          Domain22: {
+            children: null,
+            probability: 0.03,
+          },
+        },
+        probability: 1,
+      },
+      Domain3: {
+        children: {
+          Domain31: {
+            children: null,
+            probability: 0,
+          },
+          Domain32: {
+            children: null,
+            probability: 1,
+          },
+        },
+        probability: 0.4,
+      },
+    };
+
+    const { intents } = selectMultiIntents(mostLikelySubtree, domains);
+    console.log(intents);
+    assert.equal(intents.length, 2);
+
+    const domain32Intent = intents.find(data => data.intent === 'Domain32');
+    const domain11Intent = intents.find(data => data.intent === 'Domain11');
+    const domain1WLIntent = intents.find(data => data.intent === 'Domain1_wl');
+
+    assert.equal(domain1WLIntent, undefined);
+
+    assert.equal(domain32Intent.intent, 'Domain32');
+    assert.equal(domain32Intent.confidence, 0.4);
+    assert.deepEqual(domain32Intent.path, ['ROOT', 'Domain3', 'Domain32']);
+
+    assert.equal(domain11Intent.intent, 'Domain11');
+    assert.equal(domain11Intent.confidence, 0.3);
+    assert.deepEqual(domain11Intent.path, ['ROOT', 'Domain1', 'Domain11']);
+  });
 });
 
 describe('notUtilityNode', function() {
@@ -80,11 +160,11 @@ describe('selectSlot', function() {
       },
       Domain3: {
         children: {
-          Domain21: {
+          Domain31: {
             children: null,
             probability: 0,
           },
-          Domain22: {
+          Domain32: {
             children: null,
             probability: 0,
           },
