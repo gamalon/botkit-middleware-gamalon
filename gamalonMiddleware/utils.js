@@ -10,9 +10,10 @@ const selectSlot = (domains) => {
   return best;
 };
 
-const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
+const _selectSlot = (obj, prevPathProbability, best, pathSoFar, parentKey) => {
   Object.keys(obj).forEach(key => {
     let pathProbability;
+    let rootKey;
 
     if (!notUtilityNode(key) && !obj[key].probability) {
       pathProbability = prevPathProbability;
@@ -20,18 +21,20 @@ const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
       pathProbability = obj[key].probability * prevPathProbability;
     }
 
+    if (notUtilityNode(key)) {
+      rootKey = key;
+    } else {
+      rootKey = parentKey;
+    }
+
     const path = pathSoFar.concat([key]);
 
     if (obj[key].children) {
-      _selectSlot(obj[key].children, pathProbability, best, path);
+      _selectSlot(obj[key].children, pathProbability, best, path, rootKey);
     } else if (pathProbability > best.confidence) {
       best.confidence = pathProbability;
       best.path = path;
-      if (notUtilityNode(key)) {
-        best.intent = key;
-      } else {
-        best.intent = pathSoFar[pathSoFar.length - 1];
-      }
+      best.intent = rootKey;
     }
   });
 }
