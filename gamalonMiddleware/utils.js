@@ -17,11 +17,14 @@ const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
 
     if (obj[key].children) {
       _selectSlot(obj[key].children, pathProbability, best, path);
-    } else if (pathProbability > best.confidence && notUtilityNode(key)) {
-      console.log(key);
+    } else if (pathProbability > best.confidence) {
       best.confidence = pathProbability;
-      best.intent = key;
       best.path = path;
+      if (notUtilityNode(key)) {
+        best.intent = key;
+      } else {
+        best.intent = pathSoFar[pathSoFar.length - 1];
+      }
     }
   });
 }
