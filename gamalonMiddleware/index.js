@@ -83,7 +83,7 @@ module.exports = function (config) {
     * Attempt to classify uttterance
     */
     if (accessToken && message.text) {
-      API.classifyUtterance(accessToken, trainingId, message.text, algorithm)
+      API.classifyUtterance(accessToken, trainingId, message.text.toLowerCase(), algorithm)
         .then((body) => {
           const domains = JSON.parse(body).data.attributes.domains;
           message.gamalon = selectSlot(domains);
