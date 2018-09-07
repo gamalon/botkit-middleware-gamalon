@@ -12,7 +12,14 @@ const selectSlot = (domains) => {
 
 const _selectSlot = (obj, prevPathProbability, best, pathSoFar) => {
   Object.keys(obj).forEach(key => {
-    const pathProbability = obj[key].probability * prevPathProbability;
+    let pathProbability;
+
+    if (!notUtilityNode(key) && !obj[key].probability) {
+      pathProbability = prevPathProbability;
+    } else {
+      pathProbability = obj[key].probability * prevPathProbability;
+    }
+
     const path = pathSoFar.concat([key]);
 
     if (obj[key].children) {

@@ -98,13 +98,13 @@ describe('selectSlot', function() {
     assert.deepEqual(results.path, ["Domain2", "Domain22"]);
   });
 
-  it('should not consider intents that are utility nodes (contain _node or _wl suffix)', () => {
+  it('should consider probabilities of utility nodes (contain _node or _wl suffix) but use parent intent', () => {
     const domains = {
       Domain1: {
         probability: 1,
         children: {
           'Domain11_node': {
-            probability: 1,
+            probability: 0.5,
             children: null
           }
         },
@@ -130,9 +130,9 @@ describe('selectSlot', function() {
     };
 
     const results = selectSlot(domains);
-    assert.equal(results.confidence, 0.1 * 0.1);
-    assert.equal(results.intent, "Domain31");
-    assert.deepEqual(results.path, ["Domain3", "Domain31"]);
+    assert.equal(results.confidence, 1);
+    assert.equal(results.intent, "Domain2");
+    assert.deepEqual(results.path, ["Domain2", "Domain21_wl"]);
   });
 });
 
