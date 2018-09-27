@@ -37,6 +37,7 @@ module.exports = function (config) {
     */
     API.fetchTree(accessToken, config.treeId)
       .then((body) => {
+        // console.log(40,body)
         tree = JSON.parse(body).tree.tree;
 
         // process tree from DB to conform to truffula schema

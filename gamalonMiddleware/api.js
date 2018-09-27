@@ -14,7 +14,7 @@ module.exports = {
       audience: "https://demo.gamalon.com/api",
       grant_type: "client_credentials",
     });
-
+    console.log(17)
     return apiRequest('post', headers, url, body);
   },
 
@@ -29,7 +29,7 @@ module.exports = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`,
     };
-
+    // console.log(32, headers, url)
     return apiRequest('get', headers, url);
   },
 
@@ -72,6 +72,7 @@ module.exports = {
         type: 'prediction',
       },
     });
+    console.log(76)
 
     return apiRequest('post', headers, url, body);
   },
@@ -85,6 +86,9 @@ const apiRequest = (method, headers, url, body) => {
 
   return new Promise((resolve, reject) => {
     request[method](options, (err, httpResponse, resBody) => {
+      // console.log(90,options, method, httpResponse, resBody)
+      // console.log(err)
+
       if (err) {
         reject(err);
       }
