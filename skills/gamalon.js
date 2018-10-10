@@ -4,6 +4,7 @@ const gamalonMiddleware = require('../gamalonMiddleware')({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   treeId: process.env.TREE_ID,
+  // multiIntent: true,
 });
 
 module.exports = function(controller) {
@@ -20,5 +21,20 @@ module.exports = function(controller) {
     bot.reply(message, intent);
     bot.reply(message, `${confidence}`);
     bot.reply(message, JSON.stringify(path));
+
+    /* For multi-intent, comment out above code and comment in the code below */
+
+    // const { error, intents } = message.gamalon;
+    //
+    // if (error) {
+    //   bot.reply(message, `Error: ${error}`);
+    //   return
+    // }
+    //
+    // intents.forEach(({ intent, confidence, path }) => {
+    //   bot.reply(message, intent);
+    //   bot.reply(message, `${confidence}`);
+    //   bot.reply(message, JSON.stringify(path));
+    // });
   });
 };

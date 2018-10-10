@@ -1,5 +1,84 @@
 const STRIPPED_WORDLIST_TYPES = ['present', 'absent'];
 
+const notUtilityNode = (name) => (
+  !(name.endsWith('_node') || name.endsWith('_wl'))
+);
+
+const notUtilityPath = (path) => (
+  !path.some(key => key.endsWith('_node'))
+);
+
+const isSubarray = (subarray, array) => {
+  for (var i = 0; i < subarray.length; i++) {
+    let element = subarray[i];
+    if (element !== array[i]) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const pathIsUnaccountedFor = (path, sortedIntents) => (
+    sortedIntents.every(sortedIntent => (
+      !isSubarray(path, sortedIntent.path)
+    ))
+);
+
+const consolidatePaths = (intents) => {
+  const sortedIntents = intents.sort((a, b) => (
+    a.path.length < b.path.length ? -1 : 1
+  ));
+  return sortedIntents.filter((intent, i) => (
+    pathIsUnaccountedFor(intent.path, sortedIntents.slice(i + 1))
+  ));
+};
+
+const addProbabilities = (intents, domains) => {
+  intents.forEach((intent) => {
+    const path = intent.path;
+    const rootKey = path[1];
+    let currentSlot = domains[rootKey];
+    let currentProbability = currentSlot.probability;
+
+    for (let i = 2; i < path.length; i++) {
+      const nextKey = path[i];
+      currentSlot = currentSlot.children[nextKey];
+      currentProbability *= currentSlot.probability;
+    }
+
+    intent.confidence = currentProbability;
+  });
+};
+
+const selectMultiIntents = (mostLikelySubtree, domains) => {
+  let intents = [];
+  Object.keys(mostLikelySubtree).forEach(key => {
+    _selectMultiIntents(mostLikelySubtree[key], key, intents, []);
+  });
+  intents = consolidatePaths(intents);
+  addProbabilities(intents, domains);
+  return { intents };
+};
+
+const _selectMultiIntents = (mostLikelySubtree, currentIntent, intents, pathSoFar) => {
+  const subtreeKeys = Object.keys(mostLikelySubtree);
+  const path = pathSoFar.concat([currentIntent]);
+  const intent = { intent: currentIntent, path };
+
+  if (subtreeKeys.length === 0) {
+    intents.push(intent);
+    return;
+  }
+
+  subtreeKeys.forEach((key) => {
+    if (notUtilityNode(key)) {
+      _selectMultiIntents(mostLikelySubtree[key], key, intents, path);
+    } else {
+      intents.push(intent);
+    }
+  });
+};
+
 const selectSlot = (domains) => {
   let best = { intent: null, confidence: -Infinity, path: null };
   Object.keys(domains).forEach(key => {
@@ -37,15 +116,7 @@ const _selectSlot = (obj, prevPathProbability, best, pathSoFar, parentKey) => {
       best.intent = rootKey;
     }
   });
-}
-
-const notUtilityNode = (name) => (
-  !(name.endsWith('_node') || name.endsWith('_wl'))
-);
-
-const notUtilityPath = (path) => (
-  !path.some(key => key.endsWith('_node'))
-);
+};
 
 const wordListAdapter = (node) => {
   if (node.type && node.type.indexOf('WL-') === 0) {
@@ -107,4 +178,5 @@ module.exports = {
   exportCleanUp,
   selectSlot,
   notUtilityNode,
+  selectMultiIntents,
 };
