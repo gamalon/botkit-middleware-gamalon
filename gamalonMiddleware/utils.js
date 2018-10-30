@@ -51,6 +51,7 @@ const addProbabilities = (intents, domains) => {
 };
 
 const selectMultiIntents = (mostLikelySubtree, domains) => {
+  console.log(JSON.stringify(mostLikelySubtree));
   let intents = [];
   Object.keys(mostLikelySubtree).forEach(key => {
     _selectMultiIntents(mostLikelySubtree[key], key, intents, []);
