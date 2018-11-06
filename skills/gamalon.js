@@ -26,7 +26,7 @@ module.exports = function(controller) {
 
     /* For multi-intent, comment out above code and comment in the code below */
 
-    const { error, intents } = message.gamalon;
+    const { subtree, marginals, error } = message.gamalon;
 
     if (error) {
       bot.reply(message, `Error: ${error}`);
@@ -34,11 +34,5 @@ module.exports = function(controller) {
     }
 
     gamalonResponseGenerator(bot, message);
-
-    // intents.forEach(({ intent, confidence, path }) => {
-    //   bot.reply(message, intent);
-    //   bot.reply(message, `${confidence}`);
-    //   bot.reply(message, JSON.stringify(path));
-    // });
   });
 };

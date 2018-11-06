@@ -98,7 +98,7 @@ module.exports = function (config) {
           if (multiIntent) {
             message.gamalon = {
               subtree: selectMultiIntents(mostLikelySubtree, domains),
-              marginals: selectSlots(domains),
+              marginals: { intents: selectSlots(domains) },
             };
           } else {
             message.gamalon = selectSlot(domains);

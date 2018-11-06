@@ -34,11 +34,10 @@ const clarify = (message, reply) => {
     return;
   }
 
-  const { gamalon } = message;
+  const { marginals } = message.gamalon;
   const intentParentCategories = {};
 
-  console.log(JSON.stringify(gamalon.intents))
-  gamalon.intents.forEach(({ intent, confidence, path }) => {
+  marginals.intents.forEach(({ intent, confidence, path }) => {
     if (!intentParentCategories[intent]) {
       intentParentCategories[intent] = [];
     }
