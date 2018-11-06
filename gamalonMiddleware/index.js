@@ -5,6 +5,7 @@ const {
   wordListAdapter,
   exportCleanUp,
   selectSlot,
+  selectSlots,
   selectMultiIntents,
 } = require('./utils');
 
@@ -95,7 +96,10 @@ module.exports = function (config) {
           const { domains, mostLikelySubtree } = JSON.parse(body).data.attributes;
 
           if (multiIntent) {
-            message.gamalon = selectMultiIntents(mostLikelySubtree, domains);
+            message.gamalon = {
+              subtree: selectMultiIntents(mostLikelySubtree, domains),
+              marginals: selectSlots(domains),
+            };
           } else {
             message.gamalon = selectSlot(domains);
           }

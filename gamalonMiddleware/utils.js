@@ -80,6 +80,47 @@ const _selectMultiIntents = (mostLikelySubtree, currentIntent, intents, pathSoFa
   });
 };
 
+const selectSlots = (domains) => {
+  let slots = [];
+  Object.keys(domains).forEach(key => {
+    if (domains[key].children) {
+      _selectSlots(domains[key].children, domains[key].probability, slots, [key]);
+    }
+  });
+  return slots;
+};
+
+const _selectSlots = (obj, prevPathProbability, slots, pathSoFar, parentKey) => {
+  Object.keys(obj).forEach(key => {
+    let pathProbability;
+    let rootKey;
+
+    if (key === 'unknown_wl' && !obj[key].probability) {
+      pathProbability = prevPathProbability;
+    } else {
+      pathProbability = obj[key].probability * prevPathProbability;
+    }
+
+    if (notUtilityNode(key)) {
+      rootKey = key;
+    } else {
+      rootKey = parentKey;
+    }
+
+    const path = pathSoFar.concat([key]);
+
+    if (obj[key].children) {
+      _selectSlots(obj[key].children, pathProbability, slots, path, rootKey);
+    } else if (pathProbability && notUtilityPath(path)) {
+      slots.push({
+        confidence: pathProbability,
+        path: path,
+        intent: rootKey,
+      });
+    }
+  });
+};
+
 const selectSlot = (domains) => {
   let best = { intent: null, confidence: -Infinity, path: null };
   Object.keys(domains).forEach(key => {
@@ -180,4 +221,5 @@ module.exports = {
   selectSlot,
   notUtilityNode,
   selectMultiIntents,
+  selectSlots,
 };
