@@ -51,7 +51,6 @@ const addProbabilities = (intents, domains) => {
 };
 
 const selectMultiIntents = (mostLikelySubtree, domains) => {
-  console.log(JSON.stringify(mostLikelySubtree));
   let intents = [];
   Object.keys(mostLikelySubtree).forEach(key => {
     _selectMultiIntents(mostLikelySubtree[key], key, intents, []);
@@ -101,15 +100,17 @@ const _selectSlots = (obj, prevPathProbability, slots, pathSoFar, parentKey) => 
       pathProbability = obj[key].probability * prevPathProbability;
     }
 
+    let path;
     if (notUtilityNode(key)) {
       rootKey = key;
+      path = pathSoFar.concat([key]);
     } else {
       rootKey = parentKey;
+      path = pathSoFar;
     }
 
-    const path = pathSoFar.concat([key]);
 
-    if (obj[key].children) {
+    if (obj[key].children && notUtilityNode(key)) {
       _selectSlots(obj[key].children, pathProbability, slots, path, rootKey);
     } else if (pathProbability && notUtilityPath(path)) {
       slots.push({
