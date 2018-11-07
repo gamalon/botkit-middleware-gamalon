@@ -10,6 +10,8 @@ const resetContext = () => {
   };
 };
 
+let global_message
+
 const stripSuffix = (str) => {
   return str.substr(0, str.indexOf('_'));
 }
@@ -18,32 +20,6 @@ const safePush = (arr, newInt) => {
   arr.indexOf(newInt) === -1 ? arr.push(newInt) : console.log('already in intents')
 }
 
-const responseToClarification = (message, reply) => {
-  if (reply.blocked) {
-    return;
-  }
-  console.log(24, 'multiresp', multiResp)
-
-  // console.log(16, message.text)
-  // console.log(17, context.possibleResponses)
-
-  if (context.waitingForClarification) {
-    if (context.possibleResponses.map(x=>stripSuffix(x)).includes(message.text.trim().toLowerCase())) {
-      safePush(context.intents, message.text.trim().toLowerCase());
-      reply.blocked = false;
-      // console.log(35, context.intents)
-      reply.steps = [{ prompt: `Thank you. I can help you with ${context.intents.join(' ')}`}];
-      resetContext();
-    } else {
-      // console.log(26, context.possibleResponses)
-      reply.blocked = true;
-      reply.steps = [
-        { prompt: `I don't understand. Please clarify.` },
-        { prompt: `${context.possibleResponses.map(x=>stripSuffix(x)).join(' or ')}` },
-      ];
-    }
-  }
-}
 
 const clarify = (bot, message, reply) => {
   if (reply.blocked) {
@@ -132,6 +108,7 @@ const responseToCancelPrevention = (message, reply) => {
       multiResp = true
       console.log(130, 'set to true')
     }
+    global_message = false
   }
 };
 
@@ -155,10 +132,42 @@ const preventCancel = (message, reply) => {
       { prompt: `Before you cancel your ${cancelIntent} account, can we call you to see what the issue was` },
       { prompt: `Yes or no?` },
     ];
+    global_message = false
 
     context.waitingForCancelResponse = true;
   }
 }
+
+const responseToClarification = (message, reply) => {
+  if (reply.blocked) {
+    return;
+  }
+  console.log(24, 'multiresp', multiResp)
+
+  // console.log(16, message.text)
+  // console.log(17, context.possibleResponses)
+
+  if (context.waitingForClarification) {
+    if (context.possibleResponses.map(x=>stripSuffix(x)).includes(message.text.trim().toLowerCase())) {
+      safePush(context.intents, message.text.trim().toLowerCase());
+      reply.blocked = false;
+      // console.log(35, context.intents)
+      reply.steps = [{ prompt: `Thank you. I can help you with ${context.intents.join(' ')}`}];
+      global_message = false
+      resetContext();
+    } else {
+      // console.log(26, context.possibleResponses)
+      reply.blocked = true;
+      reply.steps = [
+        { prompt: `I don't understand. Please clarify.` },
+        { prompt: `${context.possibleResponses.map(x=>stripSuffix(x)).join(' or ')}` },
+      ];
+      global_message = false
+
+    }
+  }
+}
+
 
 const executeReply = (bot, message, reply) => {
   console.log(reply)
@@ -170,9 +179,10 @@ const executeReply = (bot, message, reply) => {
 
 const multi_int = (bot, message, reply) => {
   console.log(143, 'inpath')
+  if (message) {
   const  { gamalon } = message
   // console.log(144, gamalon.marginals.intents)
-  gamalon.marginals.intents.forEach((data, i) => {
+  gamalon.subtree.intents.forEach((data, i) => {
     // console.log(147, data.path)
   intnet = data.intent ? data.intent : 'UNKNOWN'
   var resp = []
@@ -189,24 +199,28 @@ const multi_int = (bot, message, reply) => {
       resp=resp.concat(pick)
     }
   }
-      knownResp = resp.join(' and specifically about')// dict[intent]
+      knownResp = resp.join(' and specifically ')// dict[intent]
       console.log('knownResp',knownResp)
       // knownResp
 
 })
   bot.reply(message, knownResp)
 }
+}
 
 module.exports = (bot, message) => {
   // if (!context.blocked) {
   //   console.log(193, 'reset multi_int')
   // }
+  message.gamalon.marginals.intents = message.gamalon.marginals.intents.filter(x=>x.confidence>0.4)
+  global_message=message
+
 
   const reply = { steps: [] };
   const qa = true // execute q&a if true, multi intent if false
   if (qa) {
   //rules
-  // console.log(190, message.gamalon.marginals.intents)
+  console.log(190, message.gamalon.marginals.intents)
   preventCancel(message, reply);
   responseToCancelPrevention(message, reply);
   responseToClarification(message, reply);
@@ -217,7 +231,7 @@ module.exports = (bot, message) => {
 console.log(215,  multiResp )
 if (!multiResp){
   console.log(217)
-  multi_int(bot, message, reply)
+  multi_int(bot, global_message, reply)
   multiResp = false
 }
 
@@ -231,5 +245,8 @@ dict = { // note don't use empty arrays!!!
 'debit': ['I see you have a debit card question'],
 'credit': ['I see you have a credit card question'],
 'cancel': ['we are sorry to see you go.'],
-'fraud': ['potential fraud']
+'fraud': ['potential fraud'],
+'rewards_wl1': ['rewards'],
+'customer_service_rep':	["thank you for the feedback in regards to our customer experience team"],
+'bad behavior': ["we're sorry that the team member was rude"],
 }
