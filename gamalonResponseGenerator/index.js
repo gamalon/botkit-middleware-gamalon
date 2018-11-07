@@ -22,14 +22,14 @@ const responseToClarification = (message, reply) => {
   }
 
   console.log(16, message.text)
-  console.log(16, context.possibleResponses)
+  console.log(17, context.possibleResponses)
 
   if (context.waitingForClarification) {
     if (context.possibleResponses.map(x=>stripSuffix(x)).includes(message.text.trim().toLowerCase())) {
       safePush(context.intents, message.text.trim().toLowerCase());
       reply.blocked = false;
       console.log(context.intents)
-      reply.steps = [{ prompt: `Thank you. So you want to ${context.intents.join(' ')}`}];
+      reply.steps = [{ prompt: `Thank you. I can help you with ${context.intents.join(' ')}`}];
       resetContext();
     } else {
       console.log(26, context.possibleResponses)
@@ -63,7 +63,6 @@ const clarify = (message, reply) => {
       }
     }
 
-
     let classification;
 
     for (let intent in intentParentCategories) {
@@ -78,7 +77,7 @@ const clarify = (message, reply) => {
 
     if (classification) {
       const step1 = ({ intent }) => ({
-        prompt: `I see that you want to ${intent}`
+        prompt: `I see that you have a question about ${intent}`
       });
       const step2 = ({ parentCategories }) => ({
         prompt: `Please help us clarify: ${parentCategories.map(x=>stripSuffix(x)).join(' or ')}`,
@@ -174,7 +173,7 @@ const multi_int = (bot, message, reply) => {
       resp=resp.concat(pick)
     }
   }
-      knownResp = resp.join(' and specifically about')// dict[intent]
+      knownResp = resp.join(' and specifically about ')// dict[intent]
       console.log('knownResp',knownResp)
       // knownResp
 
@@ -186,7 +185,7 @@ module.exports = (bot, message) => {
   const reply = { steps: [] };
   const qa = false // execute q&a if true, multi intent if false
   if (qa) {
-  //rules
+  // rules
   responseToCancelPrevention(message, reply);
   responseToClarification(message, reply);
   preventCancel(message, reply);
@@ -194,8 +193,8 @@ module.exports = (bot, message) => {
   executeReply(bot, message, reply);
 }
   else {
-    multi_int(bot, message, reply)
     // reply
+    multi_int(bot, message, reply)
   }
 };
 
@@ -206,6 +205,7 @@ dict = { // note don't use empty arrays!!!
 'activate': ['activating'],
 'debit': ['I see you have a debit card question'],
 'credit': ['I see you have a credit card question'],
-'cancel': ['we are sorry to see you go.'],
-'fraud': ['potential fraud']
+'cancel': ['cancellation, we are sorry to see you go'],
+'fraud': ['potential fraud'],
+'fee': ['fees']
 }
