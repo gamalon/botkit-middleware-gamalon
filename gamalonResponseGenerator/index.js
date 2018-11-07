@@ -187,17 +187,19 @@ const multi_int = (bot, message, reply) => {
 
 module.exports = (bot, message) => {
   const reply = { steps: [] };
-
-  // //rules
+  const qa = false // execute q&a if true, multi intent if false
+  if (qa) {
+  //rules
   responseToCancelPrevention(message, reply);
   responseToClarification(message, reply);
   preventCancel(message, reply);
   clarify(message, reply);
   executeReply(bot, message, reply);
-
-
-  // multi_int(bot, message, reply)
-  // reply
+}
+  else {
+    multi_int(bot, message, reply)
+    // reply
+  }
 };
 
 
