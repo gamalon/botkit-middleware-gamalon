@@ -104,7 +104,7 @@ const responseToCancelPrevention = (message, reply) => {
   if (context.waitingForCancelResponse) {
     if (message.text === 'no') {
       reply.steps = [
-        { prompt: 'Fine! Didn\'t want you as a customer anyway' },
+        { prompt: 'Okay, we are sorry to see you go.' },
       ];
       resetContext();
     } else if (message.text === 'yes') {
@@ -128,6 +128,7 @@ const preventCancel = (message, reply) => {
   const { gamalon } = message;
   const allPaths = gamalon.subtree.intents.reduce((acc, { intent }) => acc.concat([intent]), []);
 
+  console.log(131, allPaths, context.intents)
   if (allPaths.includes('cancel') || context.intents.includes('cancel')) {
     const cancelIndex = allPaths.findIndex((word) => word === 'cancel');
     const cancelIntent = allPaths[cancelIndex - 1] || allPaths[cancelIndex + 1];
@@ -188,14 +189,14 @@ module.exports = (bot, message) => {
   const reply = { steps: [] };
 
   // //rules
-  // responseToCancelPrevention(message, reply);
-  // responseToClarification(message, reply);
-  // clarify(message, reply);
-  // preventCancel(message, reply);
-  // executeReply(bot, message, reply);
+  responseToCancelPrevention(message, reply);
+  responseToClarification(message, reply);
+  preventCancel(message, reply);
+  clarify(message, reply);
+  executeReply(bot, message, reply);
 
 
-  multi_int(bot, message, reply)
+  // multi_int(bot, message, reply)
   // reply
 };
 
@@ -203,5 +204,6 @@ module.exports = (bot, message) => {
 dict = { // note don't use empty arrays!!!
 'UNKNOWN': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
 'unknown': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
-'activation': ['activating']
+'activate': ['activating'],
+'cancel': ['we are sorry to see you go.']
 }
