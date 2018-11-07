@@ -173,16 +173,12 @@ const multi_int = (bot, message, reply) => {
       resp=resp.concat(pick)
     }
   }
-      knownResp = resp.join('\n')// dict[intent]
-      console.log(knownResp)
+      knownResp = resp.join(' and specifically ')// dict[intent]
+      console.log('knownResp',knownResp)
       // knownResp
 
-
-
-
-
-  bot.reply(message, knownResp)
 })
+  bot.reply(message, knownResp)
 }
 
 module.exports = (bot, message) => {
@@ -207,5 +203,6 @@ dict = { // note don't use empty arrays!!!
 'UNKNOWN': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
 'unknown': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
 'activate': ['activating'],
+'debit': ['I see you have a debit question'],
 'cancel': ['we are sorry to see you go.']
 }
