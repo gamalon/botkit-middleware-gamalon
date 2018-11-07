@@ -249,4 +249,5 @@ dict = { // note don't use empty arrays!!!
 'rewards_wl1': ['rewards'],
 'customer_service_rep':	["thank you for the feedback in regards to our customer experience team"],
 'bad behavior': ["we're sorry that the team member was rude"],
+'pin': ['You need a new pin']
 }
