@@ -241,13 +241,13 @@ if (!multiResp){
 dict = { // note don't use empty arrays!!!
 'UNKNOWN': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
 'unknown': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
-'activate': ['activating'],
+'activate': ['activating.'],
 'debit': ['I see you have a debit card question'],
 'credit': ['I see you have a credit card question'],
 'cancel': ['we are sorry to see you go.'],
-'fraud': ['potential fraud'],
-'rewards_wl1': ['rewards'],
-'customer_service_rep':	["thank you for the feedback in regards to our customer experience team"],
-'bad behavior': ["we're sorry that the team member was rude"],
-'pin': ['You need a new pin']
+'fraud': ['potential fraud.'],
+'rewards_wl1': ['rewards.'],
+'customer_service_rep':	["thank you for the feedback in regards to our customer experience team."],
+'bad behavior': ["we're sorry that the team member was rude."],
+'PIN-number': ['You need a new pin.']
 }
