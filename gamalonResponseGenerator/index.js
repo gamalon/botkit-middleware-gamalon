@@ -2,6 +2,8 @@ let context = {
   intents: [],
 };
 
+let multiResp = false
+
 const resetContext = () => {
   context = {
     intents: [],
@@ -20,19 +22,20 @@ const responseToClarification = (message, reply) => {
   if (reply.blocked) {
     return;
   }
+  console.log(24, 'multiresp', multiResp)
 
-  console.log(16, message.text)
-  console.log(16, context.possibleResponses)
+  // console.log(16, message.text)
+  // console.log(17, context.possibleResponses)
 
   if (context.waitingForClarification) {
     if (context.possibleResponses.map(x=>stripSuffix(x)).includes(message.text.trim().toLowerCase())) {
       safePush(context.intents, message.text.trim().toLowerCase());
       reply.blocked = false;
-      console.log(context.intents)
-      reply.steps = [{ prompt: `Thank you. So you want to ${context.intents.join(' ')}`}];
+      // console.log(35, context.intents)
+      reply.steps = [{ prompt: `Thank you. I can help you with ${context.intents.join(' ')}`}];
       resetContext();
     } else {
-      console.log(26, context.possibleResponses)
+      // console.log(26, context.possibleResponses)
       reply.blocked = true;
       reply.steps = [
         { prompt: `I don't understand. Please clarify.` },
@@ -42,7 +45,7 @@ const responseToClarification = (message, reply) => {
   }
 }
 
-const clarify = (message, reply) => {
+const clarify = (bot, message, reply) => {
   if (reply.blocked) {
     return;
   }
@@ -50,6 +53,7 @@ const clarify = (message, reply) => {
   const { marginals } = message.gamalon;
   const intentParentCategories = {};
 
+  // console.log(53, marginals.intents, marginals.intents.map(x=>x.path))
   marginals.intents.forEach(({ intent, confidence, path }) => {
     if (!intentParentCategories[intent]) {
       intentParentCategories[intent] = [];
@@ -65,7 +69,7 @@ const clarify = (message, reply) => {
 
 
     let classification;
-
+    // console.log(69, intentParentCategories)
     for (let intent in intentParentCategories) {
       if (intentParentCategories[intent].length > 1) {
         classification = {
@@ -75,21 +79,25 @@ const clarify = (message, reply) => {
         break;
       }
     }
-
+    // console.log(79, classification)
     if (classification) {
       const step1 = ({ intent }) => ({
-        prompt: `I see that you want to ${intent}`
+        prompt: `I see that you have a question about ${intent}`
       });
       const step2 = ({ parentCategories }) => ({
         prompt: `Please help us clarify: ${parentCategories.map(x=>stripSuffix(x)).join(' or ')}`,
       });
 
       reply.blocked = true;
+      console.log(92, 'set to true')
+      multiResp=true
       reply.steps = [step1, step2].map((step) => step(classification));
 
       safePush(context.intents, classification.intent);
       context.waitingForClarification = true;
       context.possibleResponses = classification.parentCategories;
+    }else{
+      multiResp=false
     }
   });
 }
@@ -106,16 +114,23 @@ const responseToCancelPrevention = (message, reply) => {
       reply.steps = [
         { prompt: 'Okay, we are sorry to see you go.' },
       ];
+      multiResp = true
+      console.log(130, 'set to true')
+
       resetContext();
     } else if (message.text === 'yes') {
       reply.steps = [
         { prompt: 'Well call you soon' },
       ];
+      multiResp = true
+      console.log(130, 'set to true')
       resetContext();
     } else {
       reply.steps = [
         { prompt: 'I don\'t understand. Can we call you. Yes or no?' },
       ];
+      multiResp = true
+      console.log(130, 'set to true')
     }
   }
 };
@@ -126,7 +141,7 @@ const preventCancel = (message, reply) => {
   }
 
   const { gamalon } = message;
-  const allPaths = gamalon.subtree.intents.reduce((acc, { intent }) => acc.concat([intent]), []);
+  const allPaths = gamalon.marginals.intents.reduce((acc, { intent }) => acc.concat([intent]), []);
 
   console.log(131, allPaths, context.intents)
   if (allPaths.includes('cancel') || context.intents.includes('cancel')) {
@@ -156,16 +171,16 @@ const executeReply = (bot, message, reply) => {
 const multi_int = (bot, message, reply) => {
   console.log(143, 'inpath')
   const  { gamalon } = message
-  console.log(144, gamalon.subtree.intents)
-  gamalon.subtree.intents.forEach((data, i) => {
-    console.log(147, data.path)
+  // console.log(144, gamalon.marginals.intents)
+  gamalon.marginals.intents.forEach((data, i) => {
+    // console.log(147, data.path)
   intnet = data.intent ? data.intent : 'UNKNOWN'
   var resp = []
 
 
   // console.log(path)
   for (x of data.path){
-    console.log(168, x)
+    // console.log(168, x)
     // console.log(97, x)
     if (dict[x]){
       console.log('matched', x, dict[x])
@@ -183,20 +198,29 @@ const multi_int = (bot, message, reply) => {
 }
 
 module.exports = (bot, message) => {
+  // if (!context.blocked) {
+  //   console.log(193, 'reset multi_int')
+  // }
+
   const reply = { steps: [] };
-  const qa = false // execute q&a if true, multi intent if false
+  const qa = true // execute q&a if true, multi intent if false
   if (qa) {
   //rules
+  // console.log(190, message.gamalon.marginals.intents)
+  preventCancel(message, reply);
   responseToCancelPrevention(message, reply);
   responseToClarification(message, reply);
-  preventCancel(message, reply);
-  clarify(message, reply);
+  clarify(bot, message, reply);
   executeReply(bot, message, reply);
 }
-  else {
-    multi_int(bot, message, reply)
-    // reply
-  }
+
+console.log(215,  multiResp )
+if (!multiResp){
+  console.log(217)
+  multi_int(bot, message, reply)
+  multiResp = false
+}
+
 };
 
 
