@@ -158,13 +158,14 @@ const multi_int = (bot, message, reply) => {
   const  { gamalon } = message
   console.log(144, gamalon.subtree.intents)
   gamalon.subtree.intents.forEach((data, i) => {
-    console.log(147, data)
+    console.log(147, data.path)
   intnet = data.intent ? data.intent : 'UNKNOWN'
   var resp = []
 
 
   // console.log(path)
   for (x of data.path){
+    console.log(168, x)
     // console.log(97, x)
     if (dict[x]){
       console.log('matched', x, dict[x])
@@ -173,7 +174,7 @@ const multi_int = (bot, message, reply) => {
       resp=resp.concat(pick)
     }
   }
-      knownResp = resp.join(' and specifically ')// dict[intent]
+      knownResp = resp.join(' and specifically about')// dict[intent]
       console.log('knownResp',knownResp)
       // knownResp
 
@@ -203,6 +204,8 @@ dict = { // note don't use empty arrays!!!
 'UNKNOWN': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
 'unknown': ["sorry I didn't catch that.", "say again?", "can you speak more slowly please."],
 'activate': ['activating'],
-'debit': ['I see you have a debit question'],
-'cancel': ['we are sorry to see you go.']
+'debit': ['I see you have a debit card question'],
+'credit': ['I see you have a credit card question'],
+'cancel': ['we are sorry to see you go.'],
+'fraud': ['potential fraud']
 }
