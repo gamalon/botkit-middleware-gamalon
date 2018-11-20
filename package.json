@@ -8,7 +8,7 @@
     "test": "node ./node_modules/mocha/bin/mocha"
   },
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.18.3",
     "botkit": "^0.6.15",
     "botkit-storage-mongo": "^1.0.6",
     "botkit-studio-metrics": "0.0.4",
