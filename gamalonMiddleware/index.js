@@ -14,8 +14,8 @@ let middlewareError;
 const setupAccessTokenRefresh = (expires_in) => {
   setTimeout(() => {
     API.fetchAccessToken(clientId, clientSecret).then((body) => {
-      accessToken = JSON.parse(body).access_token;
-      setupAccessTokenRefresh(body.expires_in);
+      const parsedBody = JSON.parse(body);
+      setupAccessTokenRefresh(parsedBody.expires_in);
     });
   }, (expires_in - 100) * 1000);
 };
