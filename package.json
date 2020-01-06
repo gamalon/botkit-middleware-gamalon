@@ -22,7 +22,7 @@
     "wordfilter": "^0.2.6"
   },
   "devDependencies": {
-    "mocha": "^6.0.2"
+    "mocha": "^7.0.0"
   },
   "repository": {
     "type": "git",
